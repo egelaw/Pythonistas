@@ -3,7 +3,7 @@
 # Description: This program contains the Book class which is a subclass of the Media class.
 
 # Import appropriate modules
-from media import Media
+from Media import Media
 
 # Define the Book class
 class Book(Media):
