@@ -48,6 +48,134 @@ class Recommender:
         # Close the file
         file.close()
 
+    def load_shows(self):
+        # Prompt the user to select a file
+        file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(),
+                                               filetypes=[("CSV files", "*.csv")])
+
+        # If user cancels or doesn't select a file, return without loading
+        if not file_path:
+            return
+
+        # Open the file and read line by line
+        with open(file_path, newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header row
+            for row in reader:
+                try:
+                    # Extract data from CSV row
+                    id, show_type, title, directors, cast, average_rating, country, date_added, release_year, rating, duration, listed_in, description = row
+
+                    # Create Show object
+                    show = Show(id, title, float(average_rating), show_type, directors, cast, country, date_added,
+                                int(release_year), rating, duration, listed_in, description)
+
+                    # Store Show object in __shows dictionary
+                    self.__shows[id] = show
+
+                except Exception as err:
+                    print(f"Error loading show: {err}")
+
+        # Close the file
+        file.close()
+
+    def load_associations(self):
+        # Prompt the user to select a file
+        file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
+                                               filetypes=[("CSV files", "*.csv")])
+
+        # If user cancels or doesn't select a file, return without loading
+        if not file_path:
+            return
+
+        # Open the file and read line by line
+        with open(file_path, newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                try:
+                    # Extract data from CSV row
+                    id1, id2 = row
+
+                    # Create association from id1 to id2
+                    if id1 not in self.__associations:
+                        self.__associations[id1] = {}
+                    if id2 not in self.__associations[id1]:
+                        self.__associations[id1][id2] = 1
+                    else:
+                        self.__associations[id1][id2] += 1
+
+                    # Create association from id2 to id1
+                    if id2 not in self.__associations:
+                        self.__associations[id2] = {}
+                    if id1 not in self.__associations[id2]:
+                        self.__associations[id2][id1] = 1
+                    else:
+                        self.__associations[id2][id1] += 1
+
+                except Exception as err:
+                    print(f"Error loading association: {err}")
+
+    def get_movie_list(self):
+        # Find the maximum length of title and runtime for pretty printing
+        movie_shows = []
+        for show in self.__shows.values():
+            if show.get_show_type() == 'Movie':
+                movie_shows.append(show)
+
+        if movie_shows:
+            max_title_length = 0
+            max_runtime_length = 0
+
+            for show in movie_shows:
+                title_length = len(show.get_title())
+                runtime_length = len(show.get_duration())
+
+                if title_length > max_title_length:
+                    max_title_length = title_length
+                if runtime_length > max_runtime_length:
+                    max_runtime_length = runtime_length
+
+            # Initialize the movie list with the header
+            movie_list = f"{'Title':<{max_title_length}} {'Runtime':<{max_runtime_length}}\n"
+
+            # Add the title and runtime of each movie to the movie list
+            for show in movie_shows:
+                movie_list += f"{show.get_title():<{max_title_length}} {show.get_duration():<{max_runtime_length}}\n"
+        else:
+            movie_list = "No movies found.\n"
+
+        return movie_list
+
+    def get_tv_list(self):
+        tv_shows = []
+        for show in self.__shows.values():
+            if show.get_show_type() == 'Movie':
+                tv_shows.append(show)
+
+        if tv_shows:
+            max_title_length = 0
+            max_seasons_length = 0
+
+            for show in tv_shows:
+                title_length = len(show.get_title())
+                seasons_length = len(show.get_duration())
+
+                if title_length > max_title_length:
+                    max_title_length = title_length
+                if seasons_length > max_seasons_length:
+                    max_seasons_length = seasons_length
+
+            # Initialize the movie list with the header
+            tv_show_list = f"{'Title':<{max_title_length}} {'Runtime':<{max_seasons_length}}\n"
+
+            # Add the title and runtime of each movie to the movie list
+            for show in tv_shows:
+                tv_show_list += f"{show.get_title():<{max_title_length}} {show.get_duration():<{max_seasons_length}}\n"
+        else:
+            tv_show_list = "No TV shows found.\n"
+
+        return tv_show_list
+
     def get_book_list(self):
         # Check if there are any books in the __books dictionary
         if not self.__books:
@@ -75,6 +203,91 @@ class Recommender:
 
         return book_list
 
+    def get_movie_stats(self):
+        ratings = {}
+        durations = []
+        directors = {}
+        actors = {}
+        genres = {}
+
+        for show in self.__shows.values():
+            if show.get_show_type() == 'Movie':
+                ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
+                durations.append(int(show.get_duration().replace(' min', '')))
+                for director in show.get_directors().split(', '):
+                    directors[director] = directors.get(director, 0) + 1
+                for actor in show.get_actors().split(', '):
+                    actors[actor] = actors.get(actor, 0) + 1
+                for genre in show.get_genres().split(', '):
+                    genres[genre] = genres.get(genre, 0) + 1
+
+        # Calculate the statistics
+        rating_percentages = {}
+
+        for rating, count in ratings.items():
+            # Calculate the percentage
+            percentage = count / len(self.__shows) * 100
+
+            # Add the rating and its percentage to the rating_percentages dictionary
+            rating_percentages[rating] = percentage
+
+        average_duration = sum(durations) / len(durations)
+        most_common_director = max(directors, key=directors.get)
+        most_common_actor = max(actors, key=actors.get)
+        most_common_genre = max(genres, key=genres.get)
+
+        ratings_str = ""
+        for rating, percentage in rating_percentages.items():
+            formatted_percentage = f"{percentage:.2f}%"
+            ratings_str += f"{rating}: {formatted_percentage}\n"
+
+        # Return the statistics as a formatted string
+        return (f"Ratings: \n{ratings_str}\n\n"
+                f"Average Movie Duration: {average_duration:.2f} minutes\n\n"
+                f"Most Prolific Director: {most_common_director}\n\n"
+                f"Most Prolific Actor: {most_common_actor}\n\n"
+                f"Most Frequent Genre: {most_common_genre}")
+
+    def get_tv_stats(self):
+        ratings = {}
+        seasons = []
+        actors = {}
+        genres = {}
+
+        for show in self.__shows.values():
+            if show.get_show_type() == 'TV Show':
+                ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
+                seasons.append(int(show.get_duration().replace(' Seasons', '').replace(' Season', '')))
+                for actor in show.get_actors().split(', '):
+                    actors[actor] = actors.get(actor, 0) + 1
+                for genre in show.get_genres().split(', '):
+                    genres[genre] = genres.get(genre, 0) + 1
+
+        # Calculate the statistics
+        rating_percentages = {}
+
+        for rating, count in ratings.items():
+            # Calculate the percentage
+            percentage = count / len(self.__shows) * 100
+
+            # Add the rating and its percentage to the rating_percentages dictionary
+            rating_percentages[rating] = percentage
+
+        average_seasons = sum(seasons) / len(seasons)
+        most_common_actor = max(actors, key=actors.get)
+        most_common_genre = max(genres, key=genres.get)
+
+        ratings_str = ""
+        for rating, percentage in rating_percentages.items():
+            formatted_percentage = f"{percentage:.2f}%"
+            ratings_str += f"{rating}: {formatted_percentage}\n"
+
+        # Return the statistics as a formatted string
+        return (f"Ratings: \n{ratings_str}\n\n"
+                f"Average Number of Seasons: {average_seasons:.2f}\n\n"
+                f"AMost Prolific Actor: {most_common_actor}\n\n"
+                f"Most Frequent Genre: {most_common_genre}")
+
     def get_book_stats(self):
         pages = []
         authors = {}
@@ -93,12 +306,6 @@ class Recommender:
 
         # How is it for more than one most common author or publisher       ?????????????????????????????????????
 
-        return (f"Average page count: {average_pages:.2f}\n\n"
+        return (f"Average page count: {average_pages:.2f} pages\n\n"
                 f"Most Prolific Author: {most_common_author}\n\n"
                 f"Most Prolific Publisher: {most_common_publisher}")
-
-    def load_shows(self):
-        pass
-
-    def load_associations(self):
-        pass

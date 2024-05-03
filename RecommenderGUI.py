@@ -18,9 +18,7 @@ class RecommenderGUI:
         self.__main_window.title("Media Recommender")
         self.__main_window.geometry("1200x800")
 
-        # Contains a notebook tab to display all of the book titles and authors, as well as the book
-        # statistics
-        self.__book_notebook = ttk.Notebook(self.__main_window)
+        self.__notebook = ttk.Notebook(self.__main_window)
 
         # Frame for the buttons
         self.__buttons_frame = tkinter.Frame(self.__main_window)
@@ -44,11 +42,78 @@ class RecommenderGUI:
         self.quit_button.pack(side='left', padx=75)
 
         # pack notebook after buttons are packed
-        self.__book_notebook.pack(expand=True, fill='both')
+        self.__notebook.pack(expand=True, fill='both')
+
+
+        # Movies tab
+        self.__movie_tab = tkinter.Frame(self.__notebook)
+        self.__notebook.add(self.__movie_tab, text='Movies')
+
+        # Frame for the movie_text widget and its scrollbar
+        self.__movie_frame = tkinter.Frame(self.__movie_tab)
+
+        # Frame for the movie_stats
+        self.__movie_stats_frame = tkinter.Frame(self.__movie_tab)
+
+        # pack frames
+        self.__movie_frame.pack(expand=True, fill='both')
+        self.__movie_stats_frame.pack(expand=True, fill='both')
+
+        # Text widget to display the movie
+        self.__movie_text = tkinter.Text(self.__movie_frame, wrap='word')
+        # Default text to display
+        self.__movie_text.insert(tkinter.END, "No movies have been loaded yet.")
+        self.__movie_text.config(state='disabled')
+
+        # a vertical scrollbar
+        self.__scrollbar = tkinter.Scrollbar(self.__movie_frame, orient='vertical', command=self.__movie_text.yview)
+        self.__scrollbar.pack(side='right', fill='y')
+
+        self.__movie_text.config(yscrollcommand=self.__scrollbar.set)
+        self.__movie_text.pack(expand=True, fill='both')
+
+        # stats text for movies
+        self.__movie_stats_text = tkinter.Text(self.__movie_stats_frame, wrap='word')
+        self.__movie_stats_text.pack(expand=True, fill='both')
+        self.__movie_stats_text.insert(tkinter.END, "No movies have been loaded yet.")
+        self.__movie_stats_text.config(state='disabled')
+
+        # TV Shows tab
+        self.__TV_show_tab = tkinter.Frame(self.__notebook)
+        self.__notebook.add(self.__TV_show_tab, text='TV Shows')
+
+        # Frame for the TV_show_text widget and its scrollbar
+        self.__TV_show_frame = tkinter.Frame(self.__TV_show_tab)
+
+        # Frame for the TV_show_stats
+        self.__TV_show_stats_frame = tkinter.Frame(self.__TV_show_tab)
+
+        # pack frames
+        self.__TV_show_frame.pack(expand=True, fill='both')
+        self.__TV_show_stats_frame.pack(expand=True, fill='both')
+
+        # Text widget to display the TV_show
+        self.__TV_show_text = tkinter.Text(self.__TV_show_frame, wrap='word')
+        # Default text to display
+        self.__TV_show_text.insert(tkinter.END, "No TV_shows have been loaded yet.")
+        self.__TV_show_text.config(state='disabled')
+
+        # a vertical scrollbar
+        self.__scrollbar = tkinter.Scrollbar(self.__TV_show_frame, orient='vertical', command=self.__TV_show_text.yview)
+        self.__scrollbar.pack(side='right', fill='y')
+
+        self.__TV_show_text.config(yscrollcommand=self.__scrollbar.set)
+        self.__TV_show_text.pack(expand=True, fill='both')
+
+        # stats text for TV_show
+        self.__TV_show_stats_text = tkinter.Text(self.__TV_show_stats_frame, wrap='word')
+        self.__TV_show_stats_text.pack(expand=True, fill='both')
+        self.__TV_show_stats_text.insert(tkinter.END, "No TV_shows have been loaded yet.")
+        self.__TV_show_stats_text.config(state='disabled')
 
         # Books tab
-        self.__book_tab = tkinter.Frame(self.__book_notebook)
-        self.__book_notebook.add(self.__book_tab, text='Books')
+        self.__book_tab = tkinter.Frame(self.__notebook)
+        self.__notebook.add(self.__book_tab, text='Books')
 
         # Frame for the book_text widget and its scrollbar
         self.__book_frame = tkinter.Frame(self.__book_tab)
@@ -73,14 +138,41 @@ class RecommenderGUI:
         self.__book_text.config(yscrollcommand=self.__scrollbar.set)
         self.__book_text.pack(expand=True, fill='both')
 
-        # stats text
+        # stats text for books
         self.__book_stats_text = tkinter.Text(self.__book_stats_frame, wrap='word')
         self.__book_stats_text.pack(expand=True, fill='both')
         self.__book_stats_text.insert(tkinter.END, "No books have been loaded yet.")
         self.__book_stats_text.config(state='disabled')
 
+        # Search Movies/TV tab
+        self.__search_show_tab = tkinter.Frame(self.__notebook)
+        self.__notebook.add(self.__search_show_tab, text='Search Movies/TV')
+
+
     def load_shows(self):
         self.__recommender.load_shows()
+
+        movies = self.__recommender.get_movie_list()
+        movies_stats = self.__recommender.get_movie_stats()
+        self.__movie_text.config(state='normal')
+        self.__movie_stats_text.config(state='normal')
+        self.__movie_text.delete(1.0, 'end')
+        self.__movie_stats_text.delete(1.0, 'end')
+        self.__movie_text.insert('end', movies)
+        self.__movie_stats_text.insert('end', movies_stats)
+        self.__movie_text.config(state='disabled')
+        self.__movie_stats_text.config(state='disabled')
+
+        tv_shows = self.__recommender.get_tv_list()
+        tv_shows_stats = self.__recommender.get_tv_stats()
+        self.__TV_show_text.config(state='normal')
+        self.__TV_show_stats_text.config(state='normal')
+        self.__TV_show_text.delete(1.0, 'end')
+        self.__TV_show_stats_text.delete(1.0, 'end')
+        self.__TV_show_text.insert('end', tv_shows)
+        self.__TV_show_stats_text.insert('end', tv_shows_stats)
+        self.__TV_show_text.config(state='disabled')
+        self.__TV_show_stats_text.config(state='disabled')
 
     def load_associations(self):
         self.__recommender.load_associations()
