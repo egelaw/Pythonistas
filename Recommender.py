@@ -3,6 +3,7 @@
 # Description: This program contains the Recommender class which is used to recommend movies, TV shows, and books.
 
 import csv, os
+import tkinter
 from tkinter import filedialog
 import tkinter.messagebox as messagebox
 
@@ -309,3 +310,50 @@ class Recommender:
         return (f"Average page count: {average_pages:.2f} pages\n\n"
                 f"Most Prolific Author: {most_common_author}\n\n"
                 f"Most Prolific Publisher: {most_common_publisher}")
+
+
+    def search_books(self, title='', author='', publisher=''):
+        # If the title, author, and publisher are all empty
+        if not title and not author and not publisher:
+            # Spawn a showerror messagebox
+            tkinter.messagebox.showerror("Error", "Please enter information for the Title, Author, and/or Publisher first.")
+            # Return the string 'No Results'
+            return 'No Results'
+
+        # Otherwise, search through the dictionary of books
+        matching_books = []
+        for book in self.__books.values():
+            if (not title or title in book.get_title()) and \
+                    (not author or author in book.get_authors()) and \
+                    (not publisher or publisher in book.get_publisher()):
+                matching_books.append(book)
+
+        # If no results found
+        if not matching_books:
+            return 'No Results'
+
+        # Find the maximum length of title, author, and publisher for pretty printing
+        max_title_length = 0
+        max_author_length = 0
+        max_publisher_length = 0
+
+        # Iterate over each book in the list
+        for book in matching_books:
+            # Update the maximum lengths
+            if len(book.get_title()) > max_title_length:
+                max_title_length = len(book.get_title())
+            if len(book.get_authors()) > max_author_length:
+                max_author_length = len(book.get_authors())
+            if len(book.get_publisher()) > max_publisher_length:
+                max_publisher_length = len(book.get_publisher())
+
+        # Prepare the header
+        header = f"{'Title':<{max_title_length}} {'Author':<{max_author_length}} {'Publisher':<{max_publisher_length}}\n"
+
+        # Prepare the book list
+        book_list = ""
+        for book in matching_books:
+            book_list += f"{book.get_title():<{max_title_length}} {book.get_authors():<{max_author_length}} {book.get_publisher():<{max_publisher_length}}\n"
+
+        # Return the header and the book list
+        return header + book_list
