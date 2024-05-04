@@ -150,7 +150,7 @@ class Recommender:
     def get_tv_list(self):
         tv_shows = []
         for show in self.__shows.values():
-            if show.get_show_type() == 'Movie':
+            if show.get_show_type() == 'TV Show':
                 tv_shows.append(show)
 
         if tv_shows:
