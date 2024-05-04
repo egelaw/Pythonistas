@@ -210,9 +210,11 @@ class Recommender:
         directors = {}
         actors = {}
         genres = {}
+        number_of_movies = 0
 
         for show in self.__shows.values():
             if show.get_show_type() == 'Movie':
+                number_of_movies += 1
                 ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
                 durations.append(int(show.get_duration().replace(' min', '')))
                 for director in show.get_directors().split(', '):
@@ -227,7 +229,7 @@ class Recommender:
 
         for rating, count in ratings.items():
             # Calculate the percentage
-            percentage = count / len(self.__shows) * 100
+            percentage = count / number_of_movies * 100
 
             # Add the rating and its percentage to the rating_percentages dictionary
             rating_percentages[rating] = percentage
@@ -254,9 +256,11 @@ class Recommender:
         seasons = []
         actors = {}
         genres = {}
+        number_of_tv_shows = 0
 
         for show in self.__shows.values():
             if show.get_show_type() == 'TV Show':
+                number_of_tv_shows += 1
                 ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
                 seasons.append(int(show.get_duration().replace(' Seasons', '').replace(' Season', '')))
                 for actor in show.get_actors().split(', '):
@@ -269,7 +273,7 @@ class Recommender:
 
         for rating, count in ratings.items():
             # Calculate the percentage
-            percentage = count / len(self.__shows) * 100
+            percentage = count / number_of_tv_shows * 100
 
             # Add the rating and its percentage to the rating_percentages dictionary
             rating_percentages[rating] = percentage
