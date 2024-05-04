@@ -3,6 +3,7 @@
 # Description: This program contains the Recommender class which is used to recommend movies, TV shows, and books.
 
 import csv, os
+import tkinter
 from tkinter import filedialog
 import tkinter.messagebox as messagebox
 
@@ -194,14 +195,14 @@ class Recommender:
             if authors_length > max_authors_length:
                 max_authors_length = authors_length
 
-        # Initialize the book list with the header
-        book_list = f"{'Title':<{max_title_length}} {'Author(s)':<{max_authors_length}}\n"
+        # Header row
+        book_row = f"{'Title':<{max_title_length}} {'Author(s)':<{max_authors_length}}\n"
 
-        # Add the title and authors of each book to the book list
+        # Add the title and authors of each book at bottom row
         for book in self.__books.values():
-            book_list += f"{book.get_title():<{max_title_length}} {book.get_authors():<{max_authors_length}}\n"
+            book_row += f"{book.get_title():<{max_title_length}} {book.get_authors():<{max_authors_length}}\n"
 
-        return book_list
+        return book_row
 
     def get_movie_stats(self):
         ratings = {}
@@ -300,12 +301,78 @@ class Recommender:
             publishers[book.get_publisher()] = publishers.get(book.get_publisher(), 0) + 1
 
         # Calculate the statistics
-        average_pages = sum(pages) / len(pages)
-        most_common_author = max(authors, key=authors.get)
-        most_common_publisher = max(publishers, key=publishers.get)
+        try:
+            average_pages = sum(pages) / len(pages)
+            most_common_author = max(authors, key=authors.get)
+            most_common_publisher = max(publishers, key=publishers.get)
+        except ZeroDivisionError:
+            return # Do nothing 
 
-        # How is it for more than one most common author or publisher       ?????????????????????????????????????
+        # How is it for more than one most common author or publisher       ?????????????????????????????
 
         return (f"Average page count: {average_pages:.2f} pages\n\n"
                 f"Most Prolific Author: {most_common_author}\n\n"
                 f"Most Prolific Publisher: {most_common_publisher}")
+
+    # Method to search in books
+    def search_books(self, title="", author="", publisher=""):
+        title = title.strip()
+        author = author.strip()
+        publisher = publisher.strip()
+
+        # If the title, author, and publisher are all empty
+        if not title and not author and not publisher:
+            # Spawn a showerror messagebox
+            tkinter.messagebox.showerror("Error", "Please enter one or more of Title, Author, or Publisher.")
+            # Return the string 'No Results'
+            return "Nothing is searched"
+
+        # Otherwise, search through the dictionary of books
+        matching_books = []
+        for book in self.__books.values():
+            authors = book.get_authors().split("\\")
+            if title == book.get_title() and any(author == a for a in authors) and publisher == book.get_publisher():
+                matching_books.append(book)
+            elif title == book.get_title() and author == book.get_authors() and publisher == book.get_publisher():
+                matching_books.append(book)
+            elif title == book.get_title() and publisher == book.get_publisher():
+                matching_books.append(book)
+            elif any(author == a for a in authors) and publisher == book.get_publisher():
+                matching_books.append(book)
+            elif title == book.get_title():
+                matching_books.append(book)
+            elif any(author == a for a in authors):
+                matching_books.append(book)
+            elif publisher == book.get_publisher():
+                matching_books.append(book)
+
+        # If no results found
+        if not matching_books:
+            return "Search can't find a matching results."
+
+        # Find the maximum length of title, author, and publisher for pretty printing
+        max_title_length = 0
+        max_author_length = 0
+        max_publisher_length = 0
+
+        # Iterate over each book in the list
+        for book in matching_books:
+            # Update the maximum lengths
+            if len(book.get_title()) > max_title_length:
+                max_title_length = len(book.get_title())
+            if len(book.get_authors()) > max_author_length:
+                max_author_length = len(book.get_authors())
+            if len(book.get_publisher()) > max_publisher_length:
+                max_publisher_length = len(book.get_publisher())
+
+        # Header row
+        book_row = (f"{'Title':<{max_title_length}}   {'Author':<{max_author_length}}   "
+                    f"{'Publisher':<{max_publisher_length}}\n")
+        
+        # Add title, author and publisher of rearch results at bottom row
+        for book in matching_books:
+            book_row += (f"{book.get_title():<{max_title_length}}   "
+                         f"{book.get_authors():<{max_author_length}}   "
+                         f"{book.get_publisher():<{max_publisher_length}}\n")
+
+        return book_row
