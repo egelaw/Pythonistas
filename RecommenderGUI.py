@@ -328,9 +328,8 @@ class RecommenderGUI:
         self.__TV_show_text.config(state='disabled')
         self.__TV_show_stats_text.config(state='disabled')
 
-<<<<<<< HEAD
+
     # Define the method to load association file
-=======
         movie_fig, ax = plt.subplots()
         ax.pie(movie_rating_dict.values(), autopct='%1.2f%%', startangle=90)
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
@@ -351,7 +350,6 @@ class RecommenderGUI:
         tv_canvas.draw()
         tv_canvas.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=1)
 
->>>>>>> 50c994cbe3bc9638dc52f0c2d90da3c0e7fcf237
     def load_associations(self):
         self.__recommender.load_associations()
     # ========================================================
