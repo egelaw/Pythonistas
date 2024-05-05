@@ -2,27 +2,26 @@
 # Date: 05/XXXXXXX/2024
 # Description: This program contains the Recommender class which is used to recommend movies, TV shows, and books.
 
-import csv, os
-import tkinter
+# Import Python modules
+import tkinter, csv, os
 from tkinter import filedialog
 import tkinter.messagebox as messagebox
 
+# Import custom modules
 from Book import Book
 from Show import Show
-
 
 # Define the Recommender class
 class Recommender:
     # Constructor function
     def __init__(self):
-        self.__books = {}  # Key: book id, Value: Book object
-        self.__shows = {}  # Key: show id, Value: Show object
-        self.__associations = {}  # Key: book/show ID_outer, Value: Dictionary (Key: book/show ID_inner, Value: the no of times ID_outer and ID_inner are associated)
+        self.__books = {}
+        self.__shows = {}
+        self.__associations = {}
 
     def load_books(self):
         # Prompt the user to select a file
-        file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(),
-                                               filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
         if not file_path:
@@ -51,8 +50,7 @@ class Recommender:
 
     def load_shows(self):
         # Prompt the user to select a file
-        file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(),
-                                               filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
         if not file_path:
@@ -75,19 +73,16 @@ class Recommender:
                     self.__shows[id] = show
 
                 except Exception as err:
-                    print(f"Error loading show: {err}")
+                    print(f"Error loading show: {err}")         # In the GUI but not in the console????????????????????????????
 
         # Close the file
         file.close()
 
     def load_associations(self):
         # Prompt the user to select a file
-        file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
-                                               filetypes=[("CSV files", "*.csv")])
-
-        # If user cancels or doesn't select a file, return without loading
-        if not file_path:
-            return
+        file_path = ""
+        while not file_path:
+            file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -95,26 +90,29 @@ class Recommender:
             for row in reader:
                 try:
                     # Extract data from CSV row
-                    id1, id2 = row
+                    show_id, book_id = row
 
-                    # Create association from id1 to id2
-                    if id1 not in self.__associations:
-                        self.__associations[id1] = {}
-                    if id2 not in self.__associations[id1]:
-                        self.__associations[id1][id2] = 1
+                    # Create association from show_id to book_id
+                    if show_id not in self.__associations:
+                        self.__associations[show_id] = {book_id:1}
+                    elif book_id not in self.__associations[show_id]:
+                        self.__associations[show_id][book_id] = 1
                     else:
-                        self.__associations[id1][id2] += 1
+                        self.__associations[show_id][book_id] += 1
 
-                    # Create association from id2 to id1
-                    if id2 not in self.__associations:
-                        self.__associations[id2] = {}
-                    if id1 not in self.__associations[id2]:
-                        self.__associations[id2][id1] = 1
+                    # Create association from book_id to show_id
+                    if book_id not in self.__associations:
+                        self.__associations[book_id] = {show_id:1}
+                    elif show_id not in self.__associations[book_id]:
+                        self.__associations[book_id][show_id] = 1
                     else:
-                        self.__associations[id2][id1] += 1
+                        self.__associations[book_id][show_id] += 1
 
                 except Exception as err:
-                    print(f"Error loading association: {err}")
+                    print(f"Error loading association: {err}")      # In the GUI but not in the console????????????????????????????
+
+        # Close the file
+        file.close()
 
     def get_movie_list(self):
         # Find the maximum length of title and runtime for pretty printing
@@ -315,7 +313,7 @@ class Recommender:
                 f"Most Prolific Publisher: {most_common_publisher}")
 
     # Method to search in books
-    def search_books(self, title="", author="", publisher=""):
+    def search_books(self, title, author, publisher):
         title = title.strip()
         author = author.strip()
         publisher = publisher.strip()
@@ -376,3 +374,33 @@ class Recommender:
                          f"{book.get_publisher():<{max_publisher_length}}\n")
 
         return book_row
+    
+    # Method to search in shows
+    def get_recommendations(self, type, title):
+        recommendations = ""
+
+        if type == "Movie" or type == "TV Show":
+            # Search through the shows dictionary and determine the id associated with that title
+            show_id = None
+            for key, value in self.__shows.items():
+                if value == title:
+                    show_id = key
+                    break
+
+            if show_id is None:
+                # If the title is not in the dictionary, spawn a showwarning messagebox
+                # Informing the user that there are no recommendations for that title
+                # Return "No results"
+                tkinter.messagebox.showwarning("No Recommendations", "No recommendations found for the given title.")
+                return "No results"
+
+            # Using that movie or tv show id, determine all of the books associated with that id in the association dictionary
+            if show_id in self.__associations:
+                associated_books = self.__associations[show_id]
+                for book_id, count in associated_books.items():
+                    # Construct recommendation string for each book
+                    book_info = f"Book ID: {book_id}, Count: {count}\n"
+                    recommendations += book_info
+
+        # Return recommendations string
+        return recommendations
