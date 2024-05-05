@@ -41,11 +41,11 @@ class Book(Media):
         self.__isbn13 = isbn13
         self.__language = language
         self.__pages = pages
-        self.__book_rating = book_rating     # Is this going to overwride the average_rating?
+        self.__book_rating = book_rating
         self.__pub_date = pub_date
         self.__publisher = publisher
 
-    # Add appropriate getter and setter functions (NOT COMPLETE??)
+    # Add appropriate getter and setter functions
     def get_authors(self):
         return self.__authors
     

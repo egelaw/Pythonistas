@@ -46,7 +46,7 @@ class Show(Media):
         self.__country = country
         self.__date_added = date_added
         self.__release_year = release_year
-        self.__rating = rating  # Is this going to overwride the average_rating?
+        self.__rating = rating
         self.__duration = duration
         self.__genres = genres
         self.__description = description

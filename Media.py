@@ -21,10 +21,10 @@ class Media:
         self._average_rating = average_rating
 
     # Getter and setter functions
-    def get_id(self):       # No setter for id because it should not be changed???
+    def get_id(self):
         return self._id
     
-    def get_title(self):    # No setter for title because it should not be changed???
+    def get_title(self):
         return self._title
     
     def get_average_rating(self):
