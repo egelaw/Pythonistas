@@ -415,7 +415,7 @@ class Recommender:
                 tkinter.messagebox.showwarning("No Recommendations", f'There are no recommendations for "{title}".')
                 return "No results"
 
-            # Using that movie or tv show id, determine all of the books associated with that id in the association dictionary
+            # Using the movie/tv show id to determine all of the books associated with it
             if show_id in self.__associations:
                 associated_books = self.__associations[show_id]
                 for book_id, count in associated_books.items():
@@ -439,11 +439,14 @@ class Recommender:
                                 f"Publication Date:\n"
                                 f"{self.__books[book_id].get_pub_date()}\n"
                                 f"Publisher:\n"
-                                f"{self.__books[book_id].get_publisher()}\n")
+                                f"{self.__books[book_id].get_publisher()}\n"
+                                f"\n"
+                                f"*************************************************\n"
+                                f"\n")
                     
                     book_recommendations += book_info
 
-                return book_recommendations  # Moved the return outside the loop
+                return book_recommendations
 
         elif type == "Book":
             book_id = None
@@ -460,24 +463,38 @@ class Recommender:
                 associated_shows = self.__associations[book_id]
                 for show_id, count in associated_shows.items():
 
-                    show_info = (f"Title:\n{self.__shows[show_id].get_title()}\n" +
-                                (f"Directors:\n{self.__shows[show_id].get_directors()}\n" if self.__shows[show_id].get_directors() else "") +
-                                (f"Actors:\n{self.__shows[show_id].get_actors()}\n" if self.__shows[show_id].get_actors() else "") + 
-                                (f"Average Rating:\n{self.__shows[show_id].get_average_rating()}\n" if self.__shows[show_id].get_average_rating() else "") +
-                                (f"Country:\n{self.__shows[show_id].get_country()}\n" if self.__shows[show_id].get_country() else "") + 
-                                (f"Date Added:\n{self.__shows[show_id].get_date_added()}\n" if self.__shows[show_id].get_date_added() else "") + 
-                                (f"Release Year:\n{self.__shows[show_id].get_release_year()}\n" if self.__shows[show_id].get_release_year() else "") + 
-                                (f"Rating:\n{self.__shows[show_id].get_rating()}\n" if self.__shows[show_id].get_rating() else "") + 
-                                (f"Duration:\n{self.__shows[show_id].get_duration()}\n" if self.__shows[show_id].get_duration() else "") + 
-                                (f"Genres:\n{self.__shows[show_id].get_listed_in()}\n" if self.__shows[show_id].get_listed_in() else "") + 
-                                (f"Description:\n{self.__shows[show_id].get_description()}\n" if self.__shows[show_id].get_description() else ""))
-                    
+                    show_info = (f"Title:\n"
+                                f"{self.__shows[show_id].get_title()}\n"
+                                f"Directors:\n"
+                                f"{self.__shows[show_id].get_directors()}\n"
+                                f"Actors:\n"
+                                f"{self.__shows[show_id].get_actors()}\n"
+                                f"Average Rating:\n"
+                                f"{self.__shows[show_id].get_average_rating()}\n"
+                                f"Country:\n"
+                                f"{self.__shows[show_id].get_country()}\n"
+                                f"Date Added:\n"
+                                f"{self.__shows[show_id].get_date_added()}\n"
+                                f"Release Year:\n"
+                                f"{self.__shows[show_id].get_release_year()}\n"
+                                f"Rating:\n"
+                                f"{self.__shows[show_id].get_rating()}\n"
+                                f"Duration:\n"
+                                f"{self.__shows[show_id].get_duration()}\n"
+                                f"Genres:\n"
+                                f"{self.__shows[show_id].get_genres()}\n"
+                                f"Description:\n"
+                                f"{self.__shows[show_id].get_description()}\n"
+                                f"\n"
+                                f"*************************************************\n"
+                                f"\n")
+                                        
                     show_recommendations += show_info
 
-                return show_recommendations  # Moved the return outside the loop
+                return show_recommendations
 
-        # Moved return "No results" outside the if-elif block
-        tkinter.messagebox.showwarning("Invalid Type", f'Invalid media type: "{type}". Please choose "Movie", "TV Show", or "Book".')
+        # Return "No results"
+        tkinter.messagebox.showwarning("No Recommendations", f'There are no recommendations for "{type}".')
         return "No results"
 
     def search_TV_Movies(self, show_type, show_title, show_director, show_actor, show_genre):
