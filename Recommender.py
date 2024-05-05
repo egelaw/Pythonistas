@@ -220,12 +220,15 @@ class Recommender:
                 number_of_movies += 1
                 ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
                 durations.append(int(show.get_duration().replace(' min', '')))
-                for director in show.get_directors().split(', '):
-                    directors[director] = directors.get(director, 0) + 1
-                for actor in show.get_actors().split(', '):
-                    actors[actor] = actors.get(actor, 0) + 1
-                for genre in show.get_genres().split(', '):
-                    genres[genre] = genres.get(genre, 0) + 1
+                for director in show.get_directors().split('\\'):
+                    if director:
+                        directors[director] = directors.get(director, 0) + 1
+                for actor in show.get_actors().split('\\'):
+                    if actor:
+                        actors[actor] = actors.get(actor, 0) + 1
+                for genre in show.get_genres().split('\\'):
+                    if genre:
+                        genres[genre] = genres.get(genre, 0) + 1
 
         # Calculate the statistics
         rating_percentages = {}
@@ -266,10 +269,12 @@ class Recommender:
                 number_of_tv_shows += 1
                 ratings[show.get_rating()] = ratings.get(show.get_rating(), 0) + 1
                 seasons.append(int(show.get_duration().replace(' Seasons', '').replace(' Season', '')))
-                for actor in show.get_actors().split(', '):
-                    actors[actor] = actors.get(actor, 0) + 1
-                for genre in show.get_genres().split(', '):
-                    genres[genre] = genres.get(genre, 0) + 1
+                for actor in show.get_actors().split('\\'):
+                    if actor:
+                        actors[actor] = actors.get(actor, 0) + 1
+                for genre in show.get_genres().split('\\'):
+                    if genre:
+                        genres[genre] = genres.get(genre, 0) + 1
 
         # Calculate the statistics
         rating_percentages = {}
