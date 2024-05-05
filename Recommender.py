@@ -28,6 +28,9 @@ class Recommender:
             file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(),
                                                    filetypes=[("CSV files", "*.csv")])
 
+        # Clear old items
+        self.__books.clear()
+
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
@@ -57,6 +60,9 @@ class Recommender:
         while not file_path:
             file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(),
                                                    filetypes=[("CSV files", "*.csv")])
+
+        # Clear old items
+        self.__shows.clear()
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -89,6 +95,9 @@ class Recommender:
         while not file_path:
             file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
                                                    filetypes=[("CSV files", "*.csv")])
+
+        # Clear old items
+        self.__associations.clear()
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
