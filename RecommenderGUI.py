@@ -4,6 +4,9 @@
 
 import tkinter
 from tkinter import ttk
+
+import numpy as np
+
 from Recommender import Recommender
 
 import matplotlib.pyplot as plt
@@ -328,15 +331,19 @@ class RecommenderGUI:
         self.__TV_show_text.config(state='disabled')
         self.__TV_show_stats_text.config(state='disabled')
 
-
-    # Define the method to load association file
         movie_fig, ax = plt.subplots()
-        ax.pie(movie_rating_dict.values(), autopct='%1.2f%%', startangle=90)
+        ax.pie(list(movie_rating_dict.values()), labels=list(movie_rating_dict.keys()),
+               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(movie_rating_dict))))
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        ax.set_title("Movie Ratings")  # Add a title
+        ax.legend(movie_rating_dict.keys(), title="Ratings", loc="upper right")  # Add a legend
 
         tv_fig, ax = plt.subplots()
-        ax.pie(tv_rating_dict.values(), autopct='%1.2f%%', startangle=90)
+        ax.pie(list(tv_rating_dict.values()), labels=list(tv_rating_dict.keys()),
+               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(tv_rating_dict))))
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        ax.set_title("TV Show Ratings")  # Add a title
+        ax.legend(tv_rating_dict.keys(), title="Ratings", loc="upper right")  # Add a legend
 
 
         # Create a FigureCanvasTkAgg object for each figure
