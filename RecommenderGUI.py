@@ -6,6 +6,9 @@ import tkinter
 from tkinter import ttk
 from Recommender import Recommender
 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 
 class RecommenderGUI:
     def __init__(self):
@@ -193,7 +196,7 @@ class RecommenderGUI:
         self.__show_genre_entry.pack(side='left', fill='x')
 
         # Search button
-        self.__show_search_button = tkinter.Button(self.__search_show_tab, text="Search", command=self.search_shows())
+        self.__show_search_button = tkinter.Button(self.__search_show_tab, text="Search", command=self.search_shows)
         self.__show_search_button.pack(anchor='w')
 
         # Search results text area
@@ -292,11 +295,19 @@ class RecommenderGUI:
         self.__recom_scrollbar.pack(side='right', fill='y')   
     # +++++++++++++++++++++++++++RECOMMENDATION ENDS++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    # =======================BONUS RATING STARTS======================================================================
+        # Ratings tab
+        self.__rating_tab = tkinter.Frame(self.__notebook)
+        self.__notebook.add(self.__rating_tab, text='Ratings')
+
+
+    # =========================BONUS RATING ENDS===================================================================
+
     def load_shows(self):
         self.__recommender.load_shows()
 
         movies = self.__recommender.get_movie_list()
-        movies_stats = self.__recommender.get_movie_stats()
+        movies_stats, movie_rating_dict = self.__recommender.get_movie_stats()
         self.__movie_text.config(state='normal')
         self.__movie_stats_text.config(state='normal')
         self.__movie_text.delete(1.0, 'end')
@@ -307,7 +318,7 @@ class RecommenderGUI:
         self.__movie_stats_text.config(state='disabled')
 
         tv_shows = self.__recommender.get_tv_list()
-        tv_shows_stats = self.__recommender.get_tv_stats()
+        tv_shows_stats, tv_rating_dict = self.__recommender.get_tv_stats()
         self.__TV_show_text.config(state='normal')
         self.__TV_show_stats_text.config(state='normal')
         self.__TV_show_text.delete(1.0, 'end')
@@ -317,7 +328,30 @@ class RecommenderGUI:
         self.__TV_show_text.config(state='disabled')
         self.__TV_show_stats_text.config(state='disabled')
 
+<<<<<<< HEAD
     # Define the method to load association file
+=======
+        movie_fig, ax = plt.subplots()
+        ax.pie(movie_rating_dict.values(), autopct='%1.2f%%', startangle=90)
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        tv_fig, ax = plt.subplots()
+        ax.pie(tv_rating_dict.values(), autopct='%1.2f%%', startangle=90)
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+
+        # Create a FigureCanvasTkAgg object for each figure
+        movie_canvas = FigureCanvasTkAgg(movie_fig, master=self.__rating_tab)
+        tv_canvas = FigureCanvasTkAgg(tv_fig, master=self.__rating_tab)
+
+        # Display the canvases
+        movie_canvas.draw()
+        movie_canvas.get_tk_widget().pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
+
+        tv_canvas.draw()
+        tv_canvas.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=1)
+
+>>>>>>> 50c994cbe3bc9638dc52f0c2d90da3c0e7fcf237
     def load_associations(self):
         self.__recommender.load_associations()
     # ========================================================
@@ -340,6 +374,7 @@ class RecommenderGUI:
         self.__book_stats_text.insert('end', stats)
         self.__book_text.config(state='disabled')
         self.__book_stats_text.config(state='disabled')
+
     # ========================================================
     
     # Show information about team members and project completion date
@@ -360,7 +395,21 @@ class RecommenderGUI:
 
 
     def search_shows(self):
-        pass
+        show_type = self.__search_type_combobox.get()
+        show_title = self.__show_title_search_entry.get()
+        show_director = self.__show_director_entry.get()
+        show_actor = self.__show_actor_entry.get()
+        show_genre = self.__show_genre_entry.get()
+
+        results = self.__recommender.search_TV_Movies(show_type, show_title, show_director, show_actor, show_genre)
+
+        # Clear the text widget before inserting new results
+        self.__show_search_results_text.config(state='normal')
+        self.__show_search_results_text.delete(1.0, 'end')
+
+        # Insert the search results into the text widget
+        self.__show_search_results_text.insert("end", results)
+        self.__show_search_results_text.config(state='disabled')
 
     def search_books(self):
         book_title = self.__book_search_entry.get()
