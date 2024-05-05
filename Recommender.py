@@ -397,24 +397,22 @@ class Recommender:
 
         return book_row
 
-    
-    # Method to search in shows
+    # Method to get recommendations
     def get_recommendations(self, type, title):
-        recommendations = ""
+        book_recommendations = ""
+        show_recommendations = ""
 
         if type == "Movie" or type == "TV Show":
             # Search through the shows dictionary and determine the id associated with that title
             show_id = None
             for key, value in self.__shows.items():
-                if value == title:
+                if value.get_title() == title:
                     show_id = key
                     break
-
+            
+            # Unknown title
             if show_id is None:
-                # If the title is not in the dictionary, spawn a showwarning messagebox
-                # Informing the user that there are no recommendations for that title
-                # Return "No results"
-                tkinter.messagebox.showwarning("No Recommendations", "No recommendations found for the given title.")
+                tkinter.messagebox.showwarning("No Recommendations", f'There are no recommendations for "{title}".')
                 return "No results"
 
             # Using that movie or tv show id, determine all of the books associated with that id in the association dictionary
@@ -422,12 +420,65 @@ class Recommender:
                 associated_books = self.__associations[show_id]
                 for book_id, count in associated_books.items():
                     # Construct recommendation string for each book
-                    book_info = f"Book ID: {book_id}, Count: {count}\n"
-                    recommendations += book_info
+                    book_info = (f"Title:\n"
+                                f"{self.__books[book_id].get_title()}\n"
+                                f"Authors:\n"
+                                f"{self.__books[book_id].get_authors()}\n"
+                                f"Average Rating:\n"
+                                f"{self.__books[book_id].get_average_rating()}\n"
+                                f"ISBN:\n"
+                                f"{self.__books[book_id].get_isbn()}\n"
+                                f"ISBN13:\n"
+                                f"{self.__books[book_id].get_isbn13()}\n"
+                                f"Language Code:\n"
+                                f"{self.__books[book_id].get_language()}\n"
+                                f"Pages:\n"
+                                f"{self.__books[book_id].get_pages()}\n"
+                                f"Rating Count:\n"
+                                f"{self.__books[book_id].get_book_rating()}\n"
+                                f"Publication Date:\n"
+                                f"{self.__books[book_id].get_pub_date()}\n"
+                                f"Publisher:\n"
+                                f"{self.__books[book_id].get_publisher()}\n")
+                    
+                    book_recommendations += book_info
 
-        # Return recommendations string
-        return recommendations
+                return book_recommendations  # Moved the return outside the loop
 
+        elif type == "Book":
+            book_id = None
+            for key, value in self.__books.items():
+                if value.get_title() == title:
+                    book_id = key
+                    break
+            
+            if book_id is None:
+                tkinter.messagebox.showwarning("No Recommendations", f'There are no recommendations for "{title}".')
+                return "No results"
+
+            if book_id in self.__associations:
+                associated_shows = self.__associations[book_id]
+                for show_id, count in associated_shows.items():
+
+                    show_info = (f"Title:\n{self.__shows[show_id].get_title()}\n" +
+                                (f"Directors:\n{self.__shows[show_id].get_directors()}\n" if self.__shows[show_id].get_directors() else "") +
+                                (f"Actors:\n{self.__shows[show_id].get_actors()}\n" if self.__shows[show_id].get_actors() else "") + 
+                                (f"Average Rating:\n{self.__shows[show_id].get_average_rating()}\n" if self.__shows[show_id].get_average_rating() else "") +
+                                (f"Country:\n{self.__shows[show_id].get_country()}\n" if self.__shows[show_id].get_country() else "") + 
+                                (f"Date Added:\n{self.__shows[show_id].get_date_added()}\n" if self.__shows[show_id].get_date_added() else "") + 
+                                (f"Release Year:\n{self.__shows[show_id].get_release_year()}\n" if self.__shows[show_id].get_release_year() else "") + 
+                                (f"Rating:\n{self.__shows[show_id].get_rating()}\n" if self.__shows[show_id].get_rating() else "") + 
+                                (f"Duration:\n{self.__shows[show_id].get_duration()}\n" if self.__shows[show_id].get_duration() else "") + 
+                                (f"Genres:\n{self.__shows[show_id].get_listed_in()}\n" if self.__shows[show_id].get_listed_in() else "") + 
+                                (f"Description:\n{self.__shows[show_id].get_description()}\n" if self.__shows[show_id].get_description() else ""))
+                    
+                    show_recommendations += show_info
+
+                return show_recommendations  # Moved the return outside the loop
+
+        # Moved return "No results" outside the if-elif block
+        tkinter.messagebox.showwarning("Invalid Type", f'Invalid media type: "{type}". Please choose "Movie", "TV Show", or "Book".')
+        return "No results"
 
     def search_TV_Movies(self, show_type, show_title, show_director, show_actor, show_genre):
         show_type = show_type.strip()
