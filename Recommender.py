@@ -25,8 +25,9 @@ class Recommender:
                                                filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
-        if not file_path:
-            return
+        while not file_path:
+            file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(),
+                                                   filetypes=[("CSV files", "*.csv")])
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -55,8 +56,9 @@ class Recommender:
                                                filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
-        if not file_path:
-            return
+        while not file_path:
+            file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(),
+                                                   filetypes=[("CSV files", "*.csv")])
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -86,8 +88,9 @@ class Recommender:
                                                filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
-        if not file_path:
-            return
+        while not file_path:
+            file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
+                                                   filetypes=[("CSV files", "*.csv")])
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -310,7 +313,7 @@ class Recommender:
             most_common_author = max(authors, key=authors.get)
             most_common_publisher = max(publishers, key=publishers.get)
         except ZeroDivisionError:
-            return # Do nothing 
+            return  # Do nothing
 
         # How is it for more than one most common author or publisher       ?????????????????????????????
 
@@ -319,7 +322,7 @@ class Recommender:
                 f"Most Prolific Publisher: {most_common_publisher}")
 
     # Method to search in books
-    def search_books(self, title="", author="", publisher=""):
+    def search_books(self, title, author, publisher):
         title = title.strip()
         author = author.strip()
         publisher = publisher.strip()
@@ -337,7 +340,7 @@ class Recommender:
             authors = book.get_authors().split("\\")
             if title == book.get_title() and any(author == a for a in authors) and publisher == book.get_publisher():
                 matching_books.append(book)
-            elif title == book.get_title() and author == book.get_authors() and publisher == book.get_publisher():
+            elif title == book.get_title() and any(author == a for a in authors):
                 matching_books.append(book)
             elif title == book.get_title() and publisher == book.get_publisher():
                 matching_books.append(book)
@@ -348,7 +351,14 @@ class Recommender:
             elif any(author == a for a in authors):
                 matching_books.append(book)
             elif publisher == book.get_publisher():
-                matching_books.append(book)
+               matching_books.append(book)
+
+        #for book in self.__books.values():
+          #  authors = book.get_authors().split("\\")
+          #  if (not title or title in book.get_title()) and \
+           #         (not author or author in authors) and \
+           #         (not publisher or publisher in book.get_publisher()):
+           #     matching_books.append(book)
 
         # If no results found
         if not matching_books:
@@ -370,13 +380,87 @@ class Recommender:
                 max_publisher_length = len(book.get_publisher())
 
         # Header row
-        book_row = (f"{'Title':<{max_title_length}}   {'Author':<{max_author_length}}   "
+        book_row = (f"{'Title':<{max_title_length}} {'Author':<{max_author_length}} "
                     f"{'Publisher':<{max_publisher_length}}\n")
-        
-        # Add title, author and publisher of rearch results at bottom row
+
+        # Add title, author and publisher of reach results at bottom row
         for book in matching_books:
-            book_row += (f"{book.get_title():<{max_title_length}}   "
-                         f"{book.get_authors():<{max_author_length}}   "
+            book_row += (f"{book.get_title():<{max_title_length}} "
+                         f"{book.get_authors():<{max_author_length}} "
                          f"{book.get_publisher():<{max_publisher_length}}\n")
 
         return book_row
+
+    def search_TV_Movies(self, show_type, show_title, show_director, show_actor, show_genre):
+        show_type = show_type.strip()
+        show_title = show_title.strip()
+        show_director = show_director.strip()
+        show_actor = show_actor.strip()
+        show_genre = show_genre.strip()
+
+        # If the show_type is neither 'Movie' nor 'TV Show'
+        if show_type not in ["Movie", "TV Show"]:
+            # Spawn a showerror messagebox
+            tkinter.messagebox.showerror("Error", "Please select 'Movie' or 'TV Show' from Type first.")
+            # Return the string 'No Results'
+            return "Nothing is searched"
+
+        # If the show_title, show_director, show_actor, and show_genre are all empty
+        if not show_title and not show_director and not show_actor and not show_genre:
+            # Spawn a showerror messagebox
+            tkinter.messagebox.showerror("Error",
+                                         "Please enter one or more of the Title, Director, Actor, and/or Genre first.")
+            # Return the string 'No Results'
+            return "Nothing is searched"
+
+        # Otherwise, search through the dictionary of shows
+        matching_shows = []
+        for show in self.__shows.values():
+            directors = show.get_directors().split("\\")
+            actors = show.get_actors().split("\\")
+            genres = show.get_genres().split("\\")
+            if (not show_type or show_type == show.get_show_type()) and \
+                    (not show_title or show_title in show.get_title()) and \
+                    (not show_director or any(show_director in d for d in directors)) and \
+                    (not show_actor or any(show_actor in a for a in actors)) and \
+                    (not show_genre or any(show_genre in g for g in genres)):
+                matching_shows.append(show)
+
+        # If no results found
+        if not matching_shows:
+            return "Search can't find a matching results."
+
+        # Find the maximum length of type, title, director, actor, and genre for pretty printing
+        max_type_length = 0
+        max_title_length = 0
+        max_director_length = 0
+        max_actor_length = 0
+        max_genre_length = 0
+
+        # Iterate over each show in the list
+        for show in matching_shows:
+            # Update the maximum lengths if the current show's type, title, director, actor, or genre is longer
+            if len(show.get_show_type()) > max_type_length:
+                max_type_length = len(show.get_show_type())
+            if len(show.get_title()) > max_title_length:
+                max_title_length = len(show.get_title())
+            if len(show.get_directors()) > max_director_length:
+                max_director_length = len(show.get_directors())
+            if len(show.get_actors()) > max_actor_length:
+                max_actor_length = len(show.get_actors())
+            if len(show.get_genres()) > max_genre_length:
+                max_genre_length = len(show.get_genres())
+
+        # Header row
+        show_row = (
+            f"{'Type':<{max_type_length}} {'Title':<{max_title_length}} {'Director':<{max_director_length}} "
+            f"{'Actor':<{max_actor_length}} {'Genre':<{max_genre_length}}\n")
+
+        # Add type, title, director, actor, and genre of each result at bottom row
+        for show in matching_shows:
+            show_row += (f"{show.get_show_type():<{max_type_length}} {show.get_title():<{max_title_length}} "
+                         f"{show.get_directors():<{max_director_length}} {show.get_actors():<{max_actor_length}} "
+                         f"{show.get_genres():<{max_genre_length}}\n")
+
+        return show_row
+

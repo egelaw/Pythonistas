@@ -194,7 +194,7 @@ class RecommenderGUI:
         self.__show_genre_entry.pack(side='left', fill='x')
 
         # Search button
-        self.__show_search_button = tkinter.Button(self.__search_show_tab, text="Search", command=self.search_shows())
+        self.__show_search_button = tkinter.Button(self.__search_show_tab, text="Search", command=self.search_shows)
         self.__show_search_button.pack(anchor='w')
 
         # Search results text area
@@ -360,7 +360,21 @@ class RecommenderGUI:
     # ========================================================
 
     def search_shows(self):
-        pass
+        show_type = self.__search_type_combobox.get()
+        show_title = self.__show_title_search_entry.get()
+        show_director = self.__show_director_entry.get()
+        show_actor = self.__show_actor_entry.get()
+        show_genre = self.__show_genre_entry.get()
+
+        results = self.__recommender.search_TV_Movies(show_type, show_title, show_director, show_actor, show_genre)
+
+        # Clear the text widget before inserting new results
+        self.__show_search_results_text.config(state='normal')
+        self.__show_search_results_text.delete(1.0, 'end')
+
+        # Insert the search results into the text widget
+        self.__show_search_results_text.insert("end", results)
+        self.__show_search_results_text.config(state='disabled')
 
     def search_books(self):
         book_title = self.__book_search_entry.get()
