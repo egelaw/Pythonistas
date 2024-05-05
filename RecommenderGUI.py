@@ -34,11 +34,10 @@ class RecommenderGUI:
         self.__load_books_button = tkinter.Button(self.__buttons_frame, text='Load Books', command=self.load_books)
         self.__load_books_button.pack(side='left', padx=75)
 
-        self.__load_associations_button = tkinter.Button(self.__buttons_frame, text='Load Associations',
-                                                         command=self.load_associations)
+        self.__load_associations_button = tkinter.Button(self.__buttons_frame, text='Load Recommendations', command=self.load_associations)
         self.__load_associations_button.pack(side='left', padx=75)
 
-        self.__credit_info_button = tkinter.Button(self.__buttons_frame, text='Credits', command=self.credit_info_box)
+        self.__credit_info_button = tkinter.Button(self.__buttons_frame, text='Information', command=self.credit_info_box)
         self.__credit_info_button.pack(side='left', padx=75)
 
         self.quit_button = tkinter.Button(self.__buttons_frame, text='Quit', command=self.__main_window.quit)
@@ -270,8 +269,7 @@ class RecommenderGUI:
         self.__recom_type_label.pack(side='left')
         self.__recom_type_var = tkinter.StringVar()
         self.__recom_type_var.set("Movie")
-        self.__recom_type_combobox = ttk.Combobox(self.__recom_type_frame, textvariable=self.__recom_type_var,
-                                                           values=["Movie", "TV Show", "Book"])
+        self.__recom_type_combobox = ttk.Combobox(self.__recom_type_frame, textvariable=self.__recom_type_var, values=["Movie", "TV Show", "Book"])
         self.__recom_type_combobox.pack(side='left')
 
         # Appropriate Label and Entry widgets to collection information regarding the title
@@ -283,7 +281,7 @@ class RecommenderGUI:
         self.__recom_title_entry.pack(side='left', fill='x')
 
         # A Button to trigger the recommendation search, which calls the appropriate function from the Recommender object and stores the results in the text area
-        self.__recom_search_button = tkinter.Button(self.__recom_tab, text="Search", command=self.search_recommendations)
+        self.__recom_search_button = tkinter.Button(self.__recom_tab, text="Get Recommendation", command=self.get_recommendations)
         self.__recom_search_button.pack(anchor='w')
 
         # If no searches have been performed yet, the text areas should display some default text to inform the user they need to enter a title to receive a recommendation
@@ -330,6 +328,9 @@ class RecommenderGUI:
         self.__TV_show_text.config(state='disabled')
         self.__TV_show_stats_text.config(state='disabled')
 
+<<<<<<< HEAD
+    # Define the method to load association file
+=======
         movie_fig, ax = plt.subplots()
         ax.pie(movie_rating_dict.values(), autopct='%1.2f%%', startangle=90)
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
@@ -350,24 +351,9 @@ class RecommenderGUI:
         tv_canvas.draw()
         tv_canvas.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=1)
 
+>>>>>>> 50c994cbe3bc9638dc52f0c2d90da3c0e7fcf237
     def load_associations(self):
         self.__recommender.load_associations()
-
-    def credit_info_box(self):
-        # Group members
-        group_members = ["Ismail Gul", "Enalkachew Gelaw"]
-        # Day the project was completed on
-        completion_day = "May 7th, 2024"
-        
-        # Create the message
-        message = "Group Members:\n\n"
-        for member in group_members:
-            message += f"- {member}\n"
-        message += f"\nProject completed on: {completion_day}"
-        
-        # Show messagebox
-        tkinter.messagebox.showinfo("Credit Information", message)
-
     # ========================================================
     # Define the load_books method for the Load Books button
     def load_books(self):
@@ -390,6 +376,23 @@ class RecommenderGUI:
         self.__book_stats_text.config(state='disabled')
 
     # ========================================================
+    
+    # Show information about team members and project completion date
+    def credit_info_box(self):
+        # Group members
+        group_members = ["Ismail Gul", "Enalkachew Gelaw"]
+        # Day the project was completed on
+        completion_day = "May 7th, 2024"
+        
+        # Create the message
+        message = "Group Members:\n\n"
+        for member in group_members:
+            message += f"- {member}\n"
+        message += f"\nProject completed on: {completion_day}"
+        
+        # Show messagebox
+        tkinter.messagebox.showinfo("Credit Information", message)
+
 
     def search_shows(self):
         show_type = self.__search_type_combobox.get()
@@ -422,9 +425,20 @@ class RecommenderGUI:
         self.__book_search_results_text.insert("end", results)
         self.__book_search_results_text.config(state='disabled')
         
-    def search_recommendations(self):
-        # Code for searching recommendations goes here
-        pass
+    # Method to display recommendations in the text area
+    def get_recommendations(self):
+        # Extract data from GUI elements
+        type = self.__recom_type_var.get()
+        title = self.__recom_title_entry.get()
+        
+        # Get recommendations
+        recommendations = self.__recommender.get_recommendations(type, title)
+        
+        # Display the result in the text area
+        self.__recom_text.config(state='normal')
+        self.__recom_text.delete(1.0, 'end')
+        self.__recom_text.insert("end", recommendations)
+        self.__recom_text.config(state='disabled')
 
     # Main loop function
     def run(self):
