@@ -82,19 +82,13 @@ class Recommender:
 
     def load_associations(self):
         # Prompt the user to select a file
-<<<<<<< HEAD
+
         file_path = ""
-        while not file_path:
-            file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
-=======
-        file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
-                                               filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
         while not file_path:
             file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
                                                    filetypes=[("CSV files", "*.csv")])
->>>>>>> 50c994cbe3bc9638dc52f0c2d90da3c0e7fcf237
 
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
@@ -402,7 +396,7 @@ class Recommender:
                          f"{book.get_publisher():<{max_publisher_length}}\n")
 
         return book_row
-<<<<<<< HEAD
+
     
     # Method to search in shows
     def get_recommendations(self, type, title):
@@ -433,7 +427,7 @@ class Recommender:
 
         # Return recommendations string
         return recommendations
-=======
+
 
     def search_TV_Movies(self, show_type, show_title, show_director, show_actor, show_genre):
         show_type = show_type.strip()
@@ -508,4 +502,3 @@ class Recommender:
 
         return show_row
 
->>>>>>> 50c994cbe3bc9638dc52f0c2d90da3c0e7fcf237
