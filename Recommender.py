@@ -235,6 +235,8 @@ class Recommender:
         rating_percentages = {}
 
         for rating, count in ratings.items():
+            if rating == "":
+                rating = "None"
             # Calculate the percentage
             percentage = count / number_of_movies * 100
 
@@ -281,6 +283,8 @@ class Recommender:
         rating_percentages = {}
 
         for rating, count in ratings.items():
+            if rating == "":
+                rating = "None"
             # Calculate the percentage
             percentage = count / number_of_tv_shows * 100
 
