@@ -1,5 +1,5 @@
 # Authors: Ismail Gul and Endalkachew Bogale Gelaw
-# Date: 05/XXXXXXX/2024
+# Date: 05/05/2024
 # Description: This program contains the Recommender class which is used to recommend movies, TV shows, and books.
 
 # Import Python modules
@@ -47,7 +47,7 @@ class Recommender:
                     # Store Book object in _books dictionary
                     self.__books[id] = book
                 except Exception as err:
-                    print(f"Error loading book: {err}")  # In the GUI but not in the console???????
+                    print(f"Error loading book: {err}")
 
         # Close the file
         file.close()
@@ -81,7 +81,7 @@ class Recommender:
                     self.__shows[id] = show
 
                 except Exception as err:
-                    print(f"Error loading show: {err}")         # In the GUI but not in the console????????????????????????????
+                    print(f"Error loading show: {err}")
 
         # Close the file
         file.close()
@@ -124,7 +124,7 @@ class Recommender:
                         self.__associations[book_id][show_id] += 1
 
                 except Exception as err:
-                    print(f"Error loading association: {err}")      # In the GUI but not in the console????????????????????????????
+                    print(f"Error loading association: {err}")
 
         # Close the file
         file.close()
@@ -249,7 +249,7 @@ class Recommender:
             # Calculate the percentage
             percentage = count / number_of_movies * 100
 
-            # Add the rating and its percentage to the rating_percentages dictionary
+            # Add the rating
             rating_percentages[rating] = percentage
 
         average_duration = sum(durations) / len(durations)
@@ -297,7 +297,7 @@ class Recommender:
             # Calculate the percentage
             percentage = count / number_of_tv_shows * 100
 
-            # Add the rating and its percentage to the rating_percentages dictionary
+            # Add the rating
             rating_percentages[rating] = percentage
 
         average_seasons = sum(seasons) / len(seasons)
@@ -333,8 +333,6 @@ class Recommender:
             most_common_publisher = max(publishers, key=publishers.get)
         except ZeroDivisionError:
             return  # Do nothing
-
-        # How is it for more than one most common author or publisher       ?????????????????????????????
 
         return (f"Average page count: {average_pages:.2f} pages\n\n"
                 f"Most Prolific Author: {most_common_author}\n\n"
@@ -372,18 +370,11 @@ class Recommender:
             elif publisher == book.get_publisher():
                matching_books.append(book)
 
-        #for book in self.__books.values():
-          #  authors = book.get_authors().split("\\")
-          #  if (not title or title in book.get_title()) and \
-           #         (not author or author in authors) and \
-           #         (not publisher or publisher in book.get_publisher()):
-           #     matching_books.append(book)
-
         # If no results found
         if not matching_books:
             return "Search can't find a matching results."
 
-        # Find the maximum length of title, author, and publisher for pretty printing
+        # Find the maximum length of title, author, and publisher
         max_title_length = 0
         max_author_length = 0
         max_publisher_length = 0
@@ -402,7 +393,7 @@ class Recommender:
         book_row = (f"{'Title':<{max_title_length}} {'Author':<{max_author_length}} "
                     f"{'Publisher':<{max_publisher_length}}\n")
 
-        # Add title, author and publisher of reach results at bottom row
+        # Add title, author and publisher
         for book in matching_books:
             book_row += (f"{book.get_title():<{max_title_length}} "
                          f"{book.get_authors():<{max_author_length}} "
@@ -517,19 +508,15 @@ class Recommender:
         show_actor = show_actor.strip()
         show_genre = show_genre.strip()
 
-        # If the show_type is neither 'Movie' nor 'TV Show'
         if show_type not in ["Movie", "TV Show"]:
             # Spawn a showerror messagebox
             tkinter.messagebox.showerror("Error", "Please select 'Movie' or 'TV Show' from Type first.")
-            # Return the string 'No Results'
             return "Nothing is searched"
 
-        # If the show_title, show_director, show_actor, and show_genre are all empty
         if not show_title and not show_director and not show_actor and not show_genre:
             # Spawn a showerror messagebox
             tkinter.messagebox.showerror("Error",
                                          "Please enter one or more of the Title, Director, Actor, and/or Genre first.")
-            # Return the string 'No Results'
             return "Nothing is searched"
 
         # Otherwise, search through the dictionary of shows
@@ -549,7 +536,7 @@ class Recommender:
         if not matching_shows:
             return "Search can't find a matching results."
 
-        # Find the maximum length of type, title, director, actor, and genre for pretty printing
+        # Find the maximum length of type, title, director, actor, and genre
         max_type_length = 0
         max_title_length = 0
         max_director_length = 0

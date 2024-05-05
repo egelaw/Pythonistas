@@ -1,5 +1,5 @@
 # Authors: Ismail Gul and Endalkachew Bogale Gelaw
-# Date: 05/XXXXXXX/2024
+# Date: 05/05/2024
 # Description: This program contains the Show class which is a subclass of the Media class.
 
 # Import appropriate modules

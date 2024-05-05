@@ -1,6 +1,6 @@
 # Authors: Ismail Gul and Endalkachew Bogale Gelaw
-# Date: 05/XXXXXXX/2024
-# Description: This is a GUI program that converts between smoots and meters.
+# Date: 05/05/2024
+# Description: This is a GUI program for Recommender which perform an analysis of the specified data, generate statistics
 
 import tkinter
 from tkinter import ttk
