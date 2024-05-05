@@ -255,7 +255,7 @@ class Recommender:
                 f"Average Movie Duration: {average_duration:.2f} minutes\n\n"
                 f"Most Prolific Director: {most_common_director}\n\n"
                 f"Most Prolific Actor: {most_common_actor}\n\n"
-                f"Most Frequent Genre: {most_common_genre}")
+                f"Most Frequent Genre: {most_common_genre}"), rating_percentages
 
     def get_tv_stats(self):
         ratings = {}
@@ -299,7 +299,7 @@ class Recommender:
         return (f"Ratings: \n{ratings_str}\n\n"
                 f"Average Number of Seasons: {average_seasons:.2f}\n\n"
                 f"AMost Prolific Actor: {most_common_actor}\n\n"
-                f"Most Frequent Genre: {most_common_genre}")
+                f"Most Frequent Genre: {most_common_genre}"), rating_percentages
 
     def get_book_stats(self):
         pages = []
