@@ -303,10 +303,21 @@ class RecommenderGUI:
         self.__rating_tab = tkinter.Frame(self.__notebook)
         self.__notebook.add(self.__rating_tab, text='Ratings')
 
+        # Add these lines to keep a reference to the canvas widgets
+        self.__movie_canvas = None
+        self.__tv_canvas = None
+
 
     # =========================BONUS RATING ENDS===================================================================
 
     def load_shows(self):
+
+        # Clear old figures
+        if self.__movie_canvas is not None:
+            self.__movie_canvas.get_tk_widget().pack_forget()
+        if self.__tv_canvas is not None:
+            self.__tv_canvas.get_tk_widget().pack_forget()
+
         self.__recommender.load_shows()
 
         movies = self.__recommender.get_movie_list()
@@ -333,29 +344,29 @@ class RecommenderGUI:
 
         movie_fig, ax = plt.subplots()
         ax.pie(list(movie_rating_dict.values()), labels=list(movie_rating_dict.keys()),
-               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(movie_rating_dict))))
+               autopct='%1.0f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(movie_rating_dict))))
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax.set_title("Movie Ratings")  # Add a title
         ax.legend(movie_rating_dict.keys(), title="Ratings", loc="upper right")  # Add a legend
 
         tv_fig, ax = plt.subplots()
         ax.pie(list(tv_rating_dict.values()), labels=list(tv_rating_dict.keys()),
-               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(tv_rating_dict))))
+               autopct='%1.0f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(tv_rating_dict))))
         ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ax.set_title("TV Show Ratings")  # Add a title
         ax.legend(tv_rating_dict.keys(), title="Ratings", loc="upper right")  # Add a legend
 
 
         # Create a FigureCanvasTkAgg object for each figure
-        movie_canvas = FigureCanvasTkAgg(movie_fig, master=self.__rating_tab)
-        tv_canvas = FigureCanvasTkAgg(tv_fig, master=self.__rating_tab)
+        self.__movie_canvas = FigureCanvasTkAgg(movie_fig, master=self.__rating_tab)
+        self.__tv_canvas = FigureCanvasTkAgg(tv_fig, master=self.__rating_tab)
 
         # Display the canvases
-        movie_canvas.draw()
-        movie_canvas.get_tk_widget().pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
+        self.__movie_canvas.draw()
+        self.__movie_canvas.get_tk_widget().pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
 
-        tv_canvas.draw()
-        tv_canvas.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=1)
+        self.__tv_canvas.draw()
+        self.__tv_canvas.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH, expand=1)
 
     def load_associations(self):
         self.__recommender.load_associations()
