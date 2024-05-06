@@ -334,14 +334,14 @@ class RecommenderGUI:
 
         movie_fig, ax = plt.subplots()
         ax.pie(list(movie_rating_dict.values()), labels=list(movie_rating_dict.keys()),
-               autopct='%1.0f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(movie_rating_dict))))
+               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(movie_rating_dict))))
         ax.axis('equal')
         ax.set_title("Movie Ratings")
         ax.legend(movie_rating_dict.keys(), title="Ratings", loc="upper right")
 
         tv_fig, ax = plt.subplots()
         ax.pie(list(tv_rating_dict.values()), labels=list(tv_rating_dict.keys()),
-               autopct='%1.0f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(tv_rating_dict))))
+               autopct='%1.2f%%', startangle=90, colors=plt.cm.viridis(np.linspace(0, 1, len(tv_rating_dict))))
         ax.axis('equal')
         ax.set_title("TV Show Ratings")
         ax.legend(tv_rating_dict.keys(), title="Ratings", loc="upper right")
