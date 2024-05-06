@@ -19,14 +19,14 @@ class Recommender:
         self.__shows = {}
         self.__associations = {}
 
+    # Method to load books
     def load_books(self):
         # Prompt the user to select a file
         file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
-        # If user cancels or doesn't select a file, return without loading
+        # If user cancels or doesn't select a file
         while not file_path:
-            file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(),
-                                                   filetypes=[("CSV files", "*.csv")])
+            file_path = filedialog.askopenfilename(title="Select Book File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # Clear old items
         self.__books.clear()
@@ -34,15 +34,14 @@ class Recommender:
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
-            next(reader)  # Skip header row
+            next(reader)
             for row in reader:
                 try:
                     # Extract data from CSV row
                     id, title, authors, average_rating, isbn, isbn13, language, pages, book_rating, pub_date, publisher = row
 
                     # Create Book object
-                    book = Book(id, title, float(average_rating), authors, isbn, isbn13, language, int(pages),
-                                int(book_rating), pub_date, publisher)
+                    book = Book(id, title, float(average_rating), authors, isbn, isbn13, language, int(pages), int(book_rating), pub_date, publisher)
 
                     # Store Book object in _books dictionary
                     self.__books[id] = book
@@ -52,14 +51,14 @@ class Recommender:
         # Close the file
         file.close()
 
+    # Method to load shows
     def load_shows(self):
         # Prompt the user to select a file
         file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # If user cancels or doesn't select a file, return without loading
         while not file_path:
-            file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(),
-                                                   filetypes=[("CSV files", "*.csv")])
+            file_path = filedialog.askopenfilename(title="Select Show File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # Clear old items
         self.__shows.clear()
@@ -67,14 +66,14 @@ class Recommender:
         # Open the file and read line by line
         with open(file_path, newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
-            next(reader)  # Skip header row
+            next(reader)
             for row in reader:
                 try:
                     # Extract data from CSV row
                     id, show_type, title, directors, cast, average_rating, country, date_added, release_year, rating, duration, listed_in, description = row
 
                     # Create Show object
-                    show = Show(id, title, float(average_rating), show_type, directors, cast, country, date_added,
+                    show = Show(id, title, float(average_rating), show_type, directors, cast, country, date_added, 
                                 int(release_year), rating, duration, listed_in, description)
 
                     # Store Show object in __shows dictionary
@@ -83,18 +82,15 @@ class Recommender:
                 except Exception as err:
                     print(f"Error loading show: {err}")
 
-        # Close the file
         file.close()
 
+    # Method to load associations
     def load_associations(self):
-        # Prompt the user to select a file
-
         file_path = ""
 
-        # If user cancels or doesn't select a file, return without loading
+        # If user cancels or doesn't select a file
         while not file_path:
-            file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(),
-                                                   filetypes=[("CSV files", "*.csv")])
+            file_path = filedialog.askopenfilename(title="Select Association File", initialdir=os.getcwd(), filetypes=[("CSV files", "*.csv")])
 
         # Clear old items
         self.__associations.clear()
@@ -126,9 +122,9 @@ class Recommender:
                 except Exception as err:
                     print(f"Error loading association: {err}")
 
-        # Close the file
         file.close()
 
+    # Method to get the list of movies
     def get_movie_list(self):
         # Find the maximum length of title and runtime for pretty printing
         movie_shows = []
@@ -160,6 +156,7 @@ class Recommender:
 
         return movie_list
 
+    # Method to get the list of TV shows
     def get_tv_list(self):
         tv_shows = []
         for show in self.__shows.values():
@@ -190,6 +187,7 @@ class Recommender:
 
         return tv_show_list
 
+    # Method to get the list of books
     def get_book_list(self):
         # Check if there are any books in the __books dictionary
         if not self.__books:
@@ -217,6 +215,7 @@ class Recommender:
 
         return book_row
 
+    # Method to get movie statistics
     def get_movie_stats(self):
         ratings = {}
         durations = []
@@ -269,6 +268,7 @@ class Recommender:
                 f"Most Prolific Actor: {most_common_actor}\n\n"
                 f"Most Frequent Genre: {most_common_genre}"), rating_percentages
 
+    # Method to get TV show statistics
     def get_tv_stats(self):
         ratings = {}
         seasons = []
@@ -315,6 +315,7 @@ class Recommender:
                 f"AMost Prolific Actor: {most_common_actor}\n\n"
                 f"Most Frequent Genre: {most_common_genre}"), rating_percentages
 
+    # Method to get book statistics
     def get_book_stats(self):
         pages = []
         authors = {}
@@ -346,12 +347,10 @@ class Recommender:
 
         # If the title, author, and publisher are all empty
         if not title and not author and not publisher:
-            # Spawn a showerror messagebox
             tkinter.messagebox.showerror("Error", "Please enter one or more of Title, Author, or Publisher.")
-            # Return the string 'No Results'
             return "Nothing is searched"
 
-        # Otherwise, search through the dictionary of books
+        # Search through the dictionary of books
         matching_books = []
         for book in self.__books.values():
             authors = book.get_authors().split("\\")
@@ -372,7 +371,7 @@ class Recommender:
 
         # If no results found
         if not matching_books:
-            return "Search can't find a matching results."
+            return "Search can't find matching results."
 
         # Find the maximum length of title, author, and publisher
         max_title_length = 0
@@ -381,7 +380,6 @@ class Recommender:
 
         # Iterate over each book in the list
         for book in matching_books:
-            # Update the maximum lengths
             if len(book.get_title()) > max_title_length:
                 max_title_length = len(book.get_title())
             if len(book.get_authors()) > max_author_length:
@@ -451,7 +449,8 @@ class Recommender:
                     book_recommendations += book_info
 
                 return book_recommendations
-
+            
+        # Use the book id to determine all of the shows associated with it
         elif type == "Book":
             book_id = None
             for key, value in self.__books.items():
@@ -497,10 +496,11 @@ class Recommender:
 
                 return show_recommendations
 
-        # Return "No results"
+        # If the type is not recognized
         tkinter.messagebox.showwarning("No Recommendations", f'There are no recommendations for "{type}".')
         return "No results"
 
+    # Method to search in TV shows and movies
     def search_TV_Movies(self, show_type, show_title, show_director, show_actor, show_genre):
         show_type = show_type.strip()
         show_title = show_title.strip()
@@ -509,17 +509,14 @@ class Recommender:
         show_genre = show_genre.strip()
 
         if show_type not in ["Movie", "TV Show"]:
-            # Spawn a showerror messagebox
             tkinter.messagebox.showerror("Error", "Please select 'Movie' or 'TV Show' from Type first.")
             return "Nothing is searched"
 
         if not show_title and not show_director and not show_actor and not show_genre:
-            # Spawn a showerror messagebox
-            tkinter.messagebox.showerror("Error",
-                                         "Please enter one or more of the Title, Director, Actor, and/or Genre first.")
+            tkinter.messagebox.showerror("Error", "Please enter one or more of the Title, Director, Actor, and/or Genre first.")
             return "Nothing is searched"
 
-        # Otherwise, search through the dictionary of shows
+        # Search through the dictionary of shows
         matching_shows = []
         for show in self.__shows.values():
             directors = show.get_directors().split("\\")
@@ -545,7 +542,6 @@ class Recommender:
 
         # Iterate over each show in the list
         for show in matching_shows:
-            # Update the maximum lengths if the current show's type, title, director, actor, or genre is longer
             if len(show.get_show_type()) > max_type_length:
                 max_type_length = len(show.get_show_type())
             if len(show.get_title()) > max_title_length:
